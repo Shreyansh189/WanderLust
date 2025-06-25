@@ -1,7 +1,12 @@
-/*body {
+body {
     background-color: pink;
-};
-*/
+  font-family: "Plus Jakarta Sans", sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+
+}
 
 .navbar{
     height:5rem;
@@ -45,4 +50,40 @@ color: #222222 ;
     align-items: space-evenly;
 
 }
+/*cards*/
+.card{
+    border: none  !important;
+    margin-bottom:2rem;
+}
+.card-img-top{
+  border-radius:1rem !important;
+  width: 100% !important;
+  object-fit: cover !important;
+}
+.card-body{
+    padding: 0 !important;
+}
+.card-text p{
+    font-weight: 400!important;
+}
 
+/*card effect*/
+.card-img-overplay{
+    opacity: 0;
+}
+.card-img-overplay:hover{
+    opacity: 0.2;
+    background-color: white;
+}
+.add-btn{
+    background-color:#fe424d !important;
+}
+/*edit page*/
+.edit-btn{
+     background-color:#fe424d !important;
+}
+
+/*show page*/
+.show-img{
+    height: 30vh;
+}
