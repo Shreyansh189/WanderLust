@@ -4,8 +4,6 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-
-
 }
 
 .navbar{
@@ -42,13 +40,12 @@ color: #222222 ;
 }
 .f-info{
     text-align:center;
-    
     height: 8rem;
     background-color: #ebebeb;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content:center;
     align-items: space-evenly;
-
+margin-top: 7rem;
 }
 /*cards*/
 .card{
@@ -86,4 +83,12 @@ color: #222222 ;
 /*show page*/
 .show-img{
     height: 30vh;
+}
+.btns{
+    display: flex;
+
+}
+.show-card{
+    padding-left: 0;
+    padding-right: 0;
 }
