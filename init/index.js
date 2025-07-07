@@ -28,7 +28,7 @@ initDB().catch((err) => {
 if (process.argv[2] === 'clear') {
     main().then(async () => {
         await Listing.deleteMany({});
-        console.log('All listings deleted.');
+        console.log('All listings deleted.'); 
         process.exit();
     });
 }

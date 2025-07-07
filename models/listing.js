@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const review = require('./review');
 const Schema= mongoose.Schema;
 const  listingSchema=new Schema({
     title: { type: String, required: true },
@@ -10,9 +11,12 @@ const  listingSchema=new Schema({
     },
     price: { type: Number, required: true },
     location: { type: String, },
-    country: { type: String, }
+    country: { type: String, },
+    review: [{
+        type: Schema.Types.ObjectId,
+        ref: "Review" // Reference to the Review model
+    }],
 });
 
 const listing=mongoose.model('Listing',listingSchema);
 module.exports= listing; // Export the model so it can be used in other files
-// Note: The export statement should be corrected to `module.exports` instead of `module.export'

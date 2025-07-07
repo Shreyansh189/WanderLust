@@ -10,6 +10,7 @@ const { prototype } = require('events');
 const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js")
 const {listingSchema}=require("./schema.js");
+const Review =require("./models/review.js")
 
 
 main().then(()=>{
@@ -99,6 +100,18 @@ app.delete('/listings/:id', wrapAsync(async (req, res) => {
     await Listing.findByIdAndDelete(id);
     res.redirect('/listings');
 }));
+//reviews routes
+app.post("/listings/:id/reviews",async (req, res) => {
+let listing=await Listing.findById(req.params.id);
+let newReview=new Review(req.body.review);
+listing.reviews.push(newReview);
+await newReview.save();
+await listing.save();
+console.log("new review added");
+res.send("new review added");
+});
+
+
 
 app.all("*",(req,res,next)=>{
     next(new ExpressError(404,"Page Not Found!"))
@@ -110,6 +123,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render("error.ejs",{message})
     //res.status(statusCode).send(message);
 });
+
 
 app.listen(8080,()=>{//local server running on port 8080
     console.log("Server is running on port 8080");
