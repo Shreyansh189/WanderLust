@@ -12,7 +12,7 @@ const  listingSchema=new Schema({
     price: { type: Number, required: true },
     location: { type: String, },
     country: { type: String, },
-    review: [{
+    reviews: [{
         type: Schema.Types.ObjectId,
         ref: "Review" // Reference to the Review model
     }],

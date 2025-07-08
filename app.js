@@ -9,8 +9,9 @@ const ejsMate=require("ejs-mate");
 const { prototype } = require('events');
 const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js")
-const {listingSchema}=require("./schema.js");
+const {listingSchema,reviewSchema}=require("./schema.js");
 const Review =require("./models/review.js")
+
 
 
 main().then(()=>{
@@ -36,8 +37,22 @@ async function main(){//this function is used to connect to the MongoDB database
 app.get('/',(req,res)=>{//this is the starting route to check if the server is running or not
     res.send("Airbnb");
 });
+
 const validateListing=(req,res,next)=>{
 let {error}= listingSchema.validate(req.body);
+if(error){
+    throw new ExpressError(400,result)
+}else{
+    next();
+}
+   console.log(result);
+   if(result.error){
+    throw new ExpressError(400,result.error);
+   }
+};
+
+const validateReview=(req,res,next)=>{
+let {error}= reviewSchema.validate(req.body);
 if(error){
     throw new ExpressError(400,result)
 }else{
@@ -101,15 +116,17 @@ app.delete('/listings/:id', wrapAsync(async (req, res) => {
     res.redirect('/listings');
 }));
 //reviews routes
-app.post("/listings/:id/reviews",async (req, res) => {
-let listing=await Listing.findById(req.params.id);
-let newReview=new Review(req.body.review);
-listing.reviews.push(newReview);
-await newReview.save();
-await listing.save();
-console.log("new review added");
-res.send("new review added");
-});
+app.post("/listings/:id/reviews", validateReview, wrapAsync(async (req, res) => {
+    const listing = await Listing.findById(req.params.id);
+    const newReview = new Review(req.body.review);
+    listing.reviews.push(newReview);
+    await newReview.save();
+    await listing.save();
+    console.log("New review added");
+    res.redirect(`/listings/${listing._id}`); // redirect to the listing's show page
+}));
+
+
 
 
 
