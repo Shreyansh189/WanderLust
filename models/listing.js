@@ -17,6 +17,11 @@ const  listingSchema=new Schema({
         ref: "Review" // Reference to the Review model
     }],
 });
+listingSchema.pre('findOneAndDelete', async function (next) {
+    const listing = this;
+    await review.deleteMany({ _id: { $in: listing.reviews } });
+    next();
+});
 
 const listing=mongoose.model('Listing',listingSchema);
 module.exports= listing; // Export the model so it can be used in other files

@@ -48,7 +48,7 @@ color: #222222 ;
 margin-top: 7rem;
 }
 /*cards*/
-.card{
+.listing-card{
     border: none  !important;
     margin-bottom:2rem;
 }
@@ -91,4 +91,9 @@ margin-top: 7rem;
 .show-card{
     padding-left: 0;
     padding-right: 0;
+}
+.reviews{
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+   background-color: #fe424d !important;
 }

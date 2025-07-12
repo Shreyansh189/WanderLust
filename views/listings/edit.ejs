@@ -6,7 +6,7 @@
 <body>
     <h3>Edit your listings</h3>
 <!-- ...existing code... -->
-<form method="POST" action="/listings/<%= listing._id %>?_method=PUT novalidate class="needs-validation>
+<form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation">
 <!-- ...existing code... -->
   <div class="mb-3">
     <label for="title"class="form-label">Title</label>
@@ -15,7 +15,7 @@
     
      <div class="mb-3">
         <label for="description"class="form-label">Description</label>
-    <textarea name="listing[description]" class="form-control required"><%= listing.description %></textarea>
+    <textarea name="listing[description]" class="form-control" required><%= listing.description %></textarea>
 </div>
     
     <div class="mb-3">
@@ -25,19 +25,19 @@
     <div class="row">
     <div class="mb-3 col-mid-4">
       <label for="price"class="form-label">Price</label>
-        <input name="listing[price]" value="<%=listing.price%>"  type="number"class="form-control required">
+        <input name="listing[price]" value="<%=listing.price%>"  type="number"class="form-control" required>
     </div>
     
     <div class="mb-3 col-mid-8">
          <label for="location" class="form-label">Location</label>
-        <input name="listing[location]" value="<%=listing.location%>" class="form-control "required>
+        <input name="listing[location]" value="<%=listing.location%>" class="form-control" required>
         
     </div>
     </div>
     
     <div class="mb-3">
         <label for="country"class="form-label">Country</label>
-        <input name="listing[country]" value="<%=listing.country%>"type="text" class="form-control "required>
+        <input name="listing[country]" value="<%=listing.country%>" type="text" class="form-control" required>
         
     </div>
     
