@@ -13,6 +13,8 @@ const {listingSchema,reviewSchema}=require("./schema.js");
 const Review =require("./models/review.js")
 const listings=require("./routes/listing.js");
 const reviews=require("./routes/review.js");
+const flash= require('connect-flash');
+const session=require("express-session");
 
 
 
@@ -32,6 +34,20 @@ app.engine('ejs',ejsMate);
 app.use(express.static(path.join(__dirname,"public")));
 
 
+const sessionOptions={
+    secret:"mysecretkey",
+    resave:false,
+    saveUninitialized:true,
+    cookie:{
+        expires: Date.now()+7*24*60*60*1000, // 7 days
+        maxAge: 7*24*60*60*1000, // 7 days
+        httpOnly: true,
+
+    }
+};
+app.use(session(sessionOptions));
+app.use(flash());
+
 async function main(){//this function is used to connect to the MongoDB database
     await mongoose.connect(Mongo_url);
 } 
@@ -39,6 +55,12 @@ async function main(){//this function is used to connect to the MongoDB database
 
 app.get('/',(req,res)=>{//this is the starting route to check if the server is running or not
     res.send("Airbnb");
+});
+
+app.use((req,res,next)=>{//this is used to set the flash messages
+    res.locals.success=req.flash("success");
+    res.locals.error=req.flash("error");
+    next();
 });
 
 app.use("/listings",listings);//using the listings routes from the listing.js file  
