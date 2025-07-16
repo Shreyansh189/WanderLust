@@ -1,9 +1,12 @@
 const express=require("express");
+console.log(require("../middleware.js"));
 const router=express.Router({mergeParams:true});
 const wrapAsync=require("../utils/wrapAsync.js");
 const {listingSchema,reviewSchema}=require("../schema.js");
 const ExpressError=require("../utils/ExpressError.js");
 const Listing = require('../models/listing'); 
+const middleware = require("../middleware.js");
+const isLoggedIn = require("../middleware.js").isLoggedIn;
 
 const validateListing = (req, res, next) => {
     const { error } = listingSchema.validate(req.body);
@@ -15,7 +18,7 @@ const validateListing = (req, res, next) => {
 };
 
 //index
-router.get("/",wrapAsync (async (req, res) => {
+router.get("/",isLoggedIn,wrapAsync (async (req, res) => {
     const allListings = await Listing.find({});
     res.render("listings/index", { allListings });
 
@@ -23,6 +26,7 @@ router.get("/",wrapAsync (async (req, res) => {
 
 //new route to submit new listings
 router.get("/new",(req,res)=>{
+
     res.render("listings/new.ejs")
 })
 
@@ -35,7 +39,7 @@ router.get("/:id",wrapAsync( async (req, res) => {
 
 
 //create route 
-router.post("/",validateListing, wrapAsync (async(req, res,next) => {
+router.post("/",isLoggedIn,validateListing, wrapAsync (async(req, res,next) => {
 
         const newListing = new Listing(req.body.listing);
         await newListing.save();
@@ -47,14 +51,14 @@ router.post("/",validateListing, wrapAsync (async(req, res,next) => {
 );
 
 //edit route
-router.get("/:id/edit",wrapAsync( async(req,res)=>{
+router.get("/:id/edit",isLoggedIn,wrapAsync( async(req,res)=>{
     const { id } = req.params;
     const listing = await Listing.findById(id);
     res.render("listings/edit.ejs",{listing});
     
 }));
     //update route
-router.put('/:id',validateListing,wrapAsync( async (req, res) => {
+router.put('/:id',isLoggedIn,validateListing,wrapAsync( async (req, res) => {
     
     const { id } = req.params;
     await Listing.findByIdAndUpdate(id, req.body.listing, { runValidators: true });
@@ -63,7 +67,7 @@ router.put('/:id',validateListing,wrapAsync( async (req, res) => {
 }));
 
 //delete route
-router.delete('/:id', wrapAsync(async (req, res) => {
+router.delete('/:id',isLoggedIn, wrapAsync(async (req, res) => {
     const { id } = req.params;
     await Listing.findByIdAndDelete(id);
     req.flash("success","listing deleted!");

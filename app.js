@@ -10,12 +10,15 @@ const wrapAsync = require('./utils/wrapAsync.js');
 const ExpressError = require('./utils/ExpressError.js');
 const { listingSchema, reviewSchema } = require('./schema.js');
 
-const listings = require('./routes/listing.js');
-const reviews = require('./routes/review.js');
+const listingRouter = require('./routes/listing.js');
+const reviewRouter = require('./routes/review.js');
+const userRouter=require("./routes/user.js");
 
 const app = express();
 const Mongo_url = "mongodb://127.0.0.1:27017/Website";
-
+const passport=require("passport");
+const LocalStrategy=require("passport-local");
+const User=require("./models/user.js");
 // MongoDB Connection
 async function main() {
     await mongoose.connect(Mongo_url);
@@ -46,20 +49,38 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
+//passport
+app.use(passport.initialize());
+app.use(passport.session());   
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 // Set local variables for all views
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
-    
+    res.locals.error=req.flash("error");
+    res.locals.currUser=req.user;
     next();
+});
+
+app.get("/demouser", async (req, res) => {
+    let fakeuser = new User({
+        email: "student@gmail.com",
+        username: "detla-student"
+    });
+    let registerUser = await User.register(fakeuser, "Helloworld");
+    res.send(registerUser);
 });
 
 // Routes
 app.get('/', (req, res) => {
     res.send("Airbnb");
 });
-app.use("/listings", listings);
-app.use("/listings/:id/reviews", reviews);
-
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewRouter);
+app.use("/",userRouter);
 // Error Handling
 app.all("*", (req, res, next) => {
     next(new ExpressError(404, "Page Not Found!"));
