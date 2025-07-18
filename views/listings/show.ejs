@@ -7,18 +7,19 @@
     <div class="card col-6 offset-3 show-card listing-card">
         <img src="<%=listing.image%>" class="card-img-top show-img" alt="listing_image">
         <div class="card-body">
-            <p class="card-text">
+            <p class="card-text"></P>
+                <i><%= listing.owner&& listing.owner.username ? listing.owner.username : "Unknown Owner"%></i>
                 <br>
                 <%= listing.description %> <br>
                 &#8377;<%= listing.price.toLocaleString("en-IN") %><br>
                 <%= listing.location %><br>
-                <%= listing.country %><br>
+                <%= listing.country %><br> 
             </p>
 
         </div>
     </div>
    <br /><br />
-   
+  
     <div class="btns">
     <a href="/listings/<%=listing._id%>/edit" class="btn btn-dark col-1 offset-3 edit-btn">Edit</a>
     
@@ -30,6 +31,7 @@
     </form>
     </div>
     </div>
+    
     <div class="col-8 offset-3 mb-3">
         <hr>
         <h4>leave a review</h4>
@@ -40,7 +42,7 @@
             </div>
             <div class="mb-3 mt-3">
                 <label for="comment" class="form-label">Comments</label>
-                <textarea name="review[comment]" id="comment" col="30" rows="5" class="form-control" required></textarea>
+                <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" required></textarea>
                 <div class="invalid-feedback">Please add some comment </div>
             </div>
             <button class="btn btn-outline-dark">Submit</button>
@@ -53,9 +55,9 @@
            <% for(review of listing.reviews) { %>
         <div class="card col-5 ms-2 mb-3 padding-3">
             <div class="card-body">
-                <h5 class="card-title">Jane Doe</h5>
-                <p class="card-text"><%=review.comment%></p>
-                <p class="card-text">Rating: <%=review.rating%></p>
+                <h5 class="card-title"><%= listing.owner && listing.owner.username ? listing.owner.username : "Unknown Owner" %></h5>
+                <p class="card-text"><%= review.comment ? review.comment : "No comment provided." %></p>
+                <p class="card-text">Rating: <%= review.rating ? review.rating : "N/A" %></p>
             </div>
             <form method="POST" action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE">
                 <button class="btn reviews btn-dark ">Delete</button>

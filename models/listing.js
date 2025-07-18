@@ -16,6 +16,10 @@ const  listingSchema=new Schema({
         type: Schema.Types.ObjectId,
         ref: "Review" // Reference to the Review model
     }],
+    owner:{
+        type:Schema.Types.ObjectId,
+        ref:"User",
+    },
 });
 listingSchema.pre('findOneAndDelete', async function (next) {
     const listing = this;
