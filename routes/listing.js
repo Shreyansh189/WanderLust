@@ -12,6 +12,7 @@ router.route("/")
   .get(isLoggedIn, wrapAsync(listingController.index))
   .post(isLoggedIn, validateListing, wrapAsync(listingController.createListing));
 router.get("/new", isLoggedIn,listingController.renderNewForm)
+
 router.route("/:id")
   .get(wrapAsync(listingController.showListing))
   .put(isLoggedIn, validateListing, isOwner, wrapAsync(listingController.updateListing))
