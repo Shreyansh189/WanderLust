@@ -1,3 +1,10 @@
+if(process.env.NODE_ENV !="produtcion"){
+    require("dotenv").config();
+}
+
+require('dotenv').config();
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -5,6 +12,8 @@ const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const session = require('express-session');
 const flash = require('connect-flash');
+
+
 
 const wrapAsync = require('./utils/wrapAsync.js');
 const ExpressError = require('./utils/ExpressError.js');

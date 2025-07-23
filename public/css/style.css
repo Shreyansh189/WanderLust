@@ -9,8 +9,20 @@ body {
 .navbar{
     height:5rem;
     background-color: white;
-
 }
+
+/* Dropdown menu blur effect */
+@media (max-width: 767.98px) {
+    .navbar-collapse.show,
+    .navbar-collapse.collapsing {
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 0.5rem;
+    }
+}
+
 .fa-compass{
     color:#fe424d;
     font-size: 2rem;
