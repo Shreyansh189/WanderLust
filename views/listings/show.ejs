@@ -9,7 +9,7 @@
     
     <div class="row">
         <div class="card col-6 offset-3 show-card listing-card ">
-            <img src="<%=listing.image%>" class="card-img-top show-img mb-2 ms-8" alt="listing_image">
+            <img src="<%=listing.image.url%>" class="card-img-top show-img mb-2 ms-8" alt="listing_image">
             <div class="card-body">
                 <p class="card-text">
                     <i class="text-primary fw-bold"><%= listing.owner && listing.owner.username ? listing.owner.username : "Unknown Owner" %></i>

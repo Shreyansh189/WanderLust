@@ -11,8 +11,11 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'wanderLust_dev',
-    allowedFormats: async (req, file) => 'png', // supports promises as well
-    public_id: (req, file) => 'computed-filename-using-request',
+    folder: 'wanderlust_dev',
+    allowedFormats:["png","jpg","jpeg"],
   },
 });
+module.exports = {
+  cloudinary,
+  storage
+}
