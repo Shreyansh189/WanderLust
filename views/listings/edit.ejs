@@ -6,7 +6,7 @@
 <body>
     <h3>Edit your listings</h3>
 <!-- ...existing code... -->
-<form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation">
+<form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
 <!-- ...existing code... -->
   <div class="mb-3">
     <label for="title"class="form-label">Title</label>
@@ -16,6 +16,11 @@
      <div class="mb-3">
         <label for="description"class="form-label">Description</label>
     <textarea name="listing[description]" class="form-control" required><%= listing.description %></textarea>
+</div>
+<div class="mb-3">
+    <p><b>original image--</b></p>
+    <img src="<%=listing.image.url%>" style="max-width: 300px; height: auto;">
+
 </div>
     
     <div class="mb-3">

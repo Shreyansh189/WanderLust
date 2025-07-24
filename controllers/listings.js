@@ -54,13 +54,21 @@ module.exports.editListing=async (req, res) => {
 
 module.exports.updateListing=async (req, res) => {
     let { id } = req.params;
-   let listing= await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-   if(typeof req.file!="undefined"){
-   let url=req.file.path;
-    let filename=req.file.filename;
-    listing.image={url,filename};
-    await listing.save();
+    let listing = await Listing.findById(id);
+    
+    // Update the basic listing information
+    listing.set({ ...req.body.listing });
+    
+    // Update the image if a new one is uploaded
+    if(req.file) {
+        listing.image = {
+            url: req.file.path,
+            filename: req.file.filename
+        };
     }
+    
+    // Save the updated listing
+    await listing.save();
     req.flash("success", "Listing update!");
     res.redirect(`/listings/${id}`);
 };
