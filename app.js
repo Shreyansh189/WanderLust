@@ -1,4 +1,4 @@
-if(process.env.NODE_ENV !="produtcion"){
+if(process.env.NODE_ENV !="production"){
     require("dotenv").config();
 }
 
@@ -101,7 +101,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
