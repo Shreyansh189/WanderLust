@@ -2,32 +2,162 @@
 <body>
     
     <h3>ALL listings</h3>
- <!--   <form method="GET" action="/listings/new">
-    <button>Create new listing</button>
-    </form> -->
 
-<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4">
-  <% for(let listing of allListings){ %>
-    <div class="col">
-      <a href="/listings/<%=listing._id%>" style="text-decoration: none; color: inherit;">
-        <div class="card h-100 listing-card">
-        <div class="card-img-container" style="position: relative;">
-          <img src="<%=listing.image.url%>" class="card-img-top" alt="listing_image" style="height:20rem">
-          <div class="card-img-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3);"></div>
+    <!-- Cluster Map Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4>Explore Locations</h4>
+            <div id="cluster-map" style="height: 400px; width: 100%; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"></div>
         </div>
-        <div class="card-body">
-          <p class="card-text">
-            <strong><%= listing.title %></strong><br>
-            ₹<%= listing.price.toLocaleString("en-IN") %> /night
-          </p>
-        
-        </div>
-        </div>
-      </a>
     </div>
-  <% } %>
-</div>
 
+    <!-- Listings Grid -->
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4">
+      <% for(let listing of allListings){ %>
+        <div class="col">
+          <a href="/listings/<%=listing._id%>" style="text-decoration: none; color: inherit;">
+            <div class="card h-100 listing-card">
+            <div class="card-img-container" style="position: relative;">
+              <img src="<%=listing.image.url%>" class="card-img-top" alt="listing_image" style="height:20rem">
+              <div class="card-img-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3);"></div>
+            </div>
+            <div class="card-body">
+              <p class="card-text">
+                <strong><%= listing.title %></strong><br>
+                ₹<%= listing.price.toLocaleString("en-IN") %> /night
+              </p>
+            </div>
+            </div>
+          </a>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Hidden data for JavaScript -->
+    <script type="application/json" id="listings-data">
+        [
+            <% allListings.forEach((listing, index) => { %>
+                {
+                    "id": "<%= listing._id %>",
+                    "title": "<%= listing.title.replace(/"/g, '&quot;') %>",
+                    "location": "<%= listing.location || '' %>",
+                    "country": "<%= listing.country || '' %>",
+                    "price": <%= listing.price || 0 %>,
+                    "imageUrl": "<%= listing.image.url %>",
+                    "coordinates": <%= listing.geometry && listing.geometry.coordinates ? JSON.stringify(listing.geometry.coordinates) : 'null' %>
+                }<%= index < allListings.length - 1 ? ',' : '' %>
+            <% }); %>
+        ]
+    </script>
+
+    <!-- Cluster Map JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing cluster map...');
+            
+            // Get listings data from JSON script tag
+            try {
+                const listingsDataElement = document.getElementById('listings-data');
+                const listingsData = JSON.parse(listingsDataElement.textContent);
+                console.log('Listings data loaded:', listingsData.length, 'listings');
+                
+                // Check if Leaflet is loaded
+                if (typeof L === 'undefined') {
+                    console.error('Leaflet not loaded');
+                    document.getElementById('cluster-map').innerHTML = '<div style="padding: 20px; text-align: center;">❌ Map library not loaded</div>';
+                    return;
+                }
+                
+                // Initialize the cluster map
+                const clusterMap = L.map('cluster-map').setView([20.5937, 78.9629], 5);
+
+                // Add OpenStreetMap tile layer
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(clusterMap);
+
+                // Array to store all markers for bounds fitting
+                const allMarkersForBounds = [];
+                let markersAdded = 0;
+
+                // Add markers for all listings
+                listingsData.forEach((listing, index) => {
+                    if (listing.coordinates && 
+                        Array.isArray(listing.coordinates) && 
+                        listing.coordinates.length === 2 &&
+                        listing.coordinates[0] !== 0 && 
+                        listing.coordinates[1] !== 0) {
+                        
+                        try {
+                            // Create custom icon
+                            const customIcon = L.divIcon({
+                                html: '<i class="fas fa-home" style="color: #e74c3c; font-size: 20px;"></i>',
+                                iconSize: [25, 25],
+                                className: 'custom-div-icon'
+                            });
+
+                            // Add marker [lat, lng]
+                            const lat = listing.coordinates[1];
+                            const lng = listing.coordinates[0];
+                            
+                            const marker = L.marker([lat, lng], { icon: customIcon }).addTo(clusterMap);
+
+                            // Add to bounds array
+                            allMarkersForBounds.push([lat, lng]);
+
+                            // Create popup content
+                            const popupContent = 
+                                '<div style="text-align: center; min-width: 200px;">' +
+                                '<img src="' + listing.imageUrl + '" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;" alt="' + listing.title + '">' +
+                                '<h6 style="margin-bottom: 8px; color: #2c3e50;">' + listing.title + '</h6>' +
+                                '<p style="margin-bottom: 5px; font-size: 14px;"><strong>' + (listing.location || 'Location not specified') + '</strong></p>' +
+                                '<p style="margin: 0; font-size: 12px; color: #7f8c8d;">' + (listing.country || 'Country not specified') + '</p>' +
+                                '<p style="margin: 8px 0; font-weight: bold; color: #27ae60;">₹' + listing.price.toLocaleString("en-IN") + '/night</p>' +
+                                '<a href="/listings/' + listing.id + '" class="btn btn-primary btn-sm" style="margin-top: 8px;">View Details</a>' +
+                                '</div>';
+
+                            marker.bindPopup(popupContent);
+                            markersAdded++;
+                            
+                            console.log('✅ Marker added for:', listing.title);
+
+                        } catch (error) {
+                            console.error('❌ Error adding marker for listing:', listing.title, error);
+                        }
+                    }
+                });
+
+                // Fit map to show all markers if there are any
+                if (allMarkersForBounds.length > 0) {
+                    console.log('📍 Fitting bounds for', markersAdded, 'markers');
+                    
+                    const markersGroup = new L.featureGroup(
+                        allMarkersForBounds.map(coords => L.marker(coords))
+                    );
+                    clusterMap.fitBounds(markersGroup.getBounds().pad(0.1));
+                } else {
+                    console.log('📍 No markers to display');
+                    
+                    // If no markers, show a message
+                    document.getElementById('cluster-map').innerHTML = 
+                        '<div style="display: flex; justify-content: center; align-items: center; height: 100%; background-color: #f8f9fa; border-radius: 10px;">' +
+                        '<div style="text-align: center; color: #6c757d;">' +
+                        '<i class="fas fa-map" style="font-size: 48px; margin-bottom: 16px;"></i>' +
+                        '<h5>No locations to display</h5>' +
+                        '<p>Create listings with locations to see them on the map!</p>' +
+                        '<a href="/listings/new" class="btn btn-primary btn-sm mt-2">Create First Listing</a>' +
+                        '</div>' +
+                        '</div>';
+                }
+
+                console.log('✅ Cluster map initialization complete! Added', markersAdded, 'markers');
+
+            } catch (error) {
+                console.error('❌ Error initializing cluster map:', error);
+                document.getElementById('cluster-map').innerHTML = '<div style="padding: 20px; text-align: center; background: #ffebee;">❌ Error loading map: ' + error.message + '</div>';
+            }
+        });
+    </script>
  
 </body>
-

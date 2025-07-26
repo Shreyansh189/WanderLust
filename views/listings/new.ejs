@@ -1,58 +1,243 @@
 <% layout("layouts/boilerplate")%>
-<div class="row mt-3 ">
-    <div class="col-8 offset-2">
-    <h3>Create New Listing</h3>
-<form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
-    <div class="mb-3">
+<body>
+    <div class="row">
+        <div class="col-8 offset-2">
+            <h3>Create New Listing</h3>
+            <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
+                
+                <!-- Your existing form fields -->
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input name="listing[title]" id="title" type="text" class="form-control" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="listing[description]" id="description" class="form-control" required></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="image" class="form-label">Upload Image</label>
+                    <input name="listing[image]" id="image" type="file" class="form-control" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input name="listing[price]" id="price" type="number" class="form-control" required>
+                </div>
+                
+                <!-- Enhanced Location Fields -->
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input name="listing[location]" id="location" type="text" class="form-control" required 
+                           placeholder="e.g., Mumbai, Bandra West">
+                    <div class="form-text">Enter the location and optionally click on the map below to set exact coordinates</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="country" class="form-label">Country</label>
+                    <input name="listing[country]" id="country" type="text" class="form-control" required 
+                           placeholder="e.g., India">
+                </div>
+                
+                <!-- Interactive Map for Location Selection -->
+                <div class="mb-3">
+                    <label class="form-label">Choose Exact Location on Map (Optional)</label>
+                    <div class="d-flex gap-2 mb-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="searchOnMap()">
+                            🔍 Search Location on Map
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearMapSelection()">
+                            🗑️ Clear Selection
+                        </button>
+                    </div>
+                    <div id="new-listing-map" style="height: 350px; width: 100%; border: 2px solid #dee2e6; border-radius: 8px;"></div>
+                    <div class="form-text mt-2">
+                        <strong>Instructions:</strong> Click anywhere on the map to set exact coordinates, or use the search button to find your location.
+                    </div>
+                </div>
+                
+                <!-- Hidden fields for coordinates -->
+               <input type="hidden" name="listing[geometry][coordinates][0]" id="longitude" value="">
 
-    <label for="title"class="form-label">Title</label>
-    <input name="listing[title]" placeholder="enter title" class="form-control"required>
-    
-    <div class="valid-feedback">title looks good</div>
-    <div class=invalid-feedback>please enter the title</div>
+               <input type="hidden" name="listing[geometry][coordinates][1]" id="latitude" value="">
+
+                
+                <!-- Coordinate display -->
+                <div class="mb-3" id="coordinates-display" style="display: none;">
+                    <div class="alert alert-info">
+                        <strong>📍 Selected Coordinates:</strong>
+                        <span id="coords-text"></span>
+                        <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="clearMapSelection()">Remove</button>
+                    </div>
+                </div>
+                
+                <button class="btn btn-dark" type="submit">Add Listing</button>
+            </form>
+        </div>
     </div>
 
-    
-
-    <div class="mb-3">
+    <!-- Map JavaScript -->
+    <script>
+        let newListingMap, selectedMarker;
         
-    <label for="description"class="form-label">Description</label>
-    <textarea name="listing[description]" class="form-control" required></textarea>
-    <div class="invalid-feedback">please write short description</div>
-    </div>
+        // Initialize map when document loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing new listing map...');
+            
+            // Initialize map centered on India
+            newListingMap = L.map('new-listing-map').setView([20.5937, 78.9629], 5);
+            
+            // Add tile layer
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(newListingMap);
+            
+            // Add click functionality
+            newListingMap.on('click', function(e) {
+                setMarkerAtLocation(e.latlng.lat, e.latlng.lng);
+            });
+            
+            console.log('✅ New listing map initialized');
+        });
+        
+        // Function to set marker at specific coordinates
+        function setMarkerAtLocation(lat, lng) {
+            console.log('Setting marker at:', lat, lng);
+            
+            // Remove existing marker
+            if (selectedMarker) {
+                newListingMap.removeLayer(selectedMarker);
+            }
+            
+            // Create custom marker icon
+            const customIcon = L.divIcon({
+                html: '<i class="fas fa-map-marker-alt" style="color: #e74c3c; font-size: 25px;"></i>',
+                iconSize: [25, 25],
+                className: 'custom-div-icon'
+            });
+            
+            // Add new marker
+            selectedMarker = L.marker([lat, lng], { icon: customIcon }).addTo(newListingMap);
+            
+           // Update hidden form fields
+document.getElementById('longitude').value = lng;
+document.getElementById('latitude').value = lat;
 
-
-<div class="mb-3">
-     <label for="image"class="form-label">Upload Image </label>
-    <input name="listing[image]"  type="file" class="form-control">
-    required
-    </div>
-    
-<div class="row">
-<div class="mb-3 col-md-4">
-    <label for="price"class="form-label">Price</label>
-    <input name="listing[price]" placeholder="enter price" type="number"class="form-control"required>
-    <div class=invalid-feedback>invalid price</div>
-   
-    </div>
-
-    
-    <div class="mb-3 col-md-8">
-         <label for="loaction"class="form-label">Location</label>
-    <input name="listing[location]" placeholder="enter location"class="form-control"required>
-    <div class=invalid-feedback>location</div>
-   
-    </div>
-    </div>
-    <br>
-    <div class="mb-3">
-         <label for="country"class="form-label">Country</label>
-    <input name="listing[country]" placeholder="enter country"class="form-control"required>
-    <div class=invalid-feedback>please enter the Country</div>
-   
-    </div>
-    
-<button class="btn btn-dark add-btn mt-3">Add</button>
-</form>
-</div>
-</div>
+            
+            // Update coordinate display
+            document.getElementById('coordinates-display').style.display = 'block';
+            document.getElementById('coords-text').textContent = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+            
+            // Add popup to marker
+            selectedMarker.bindPopup(`
+                <div style="text-align: center;">
+                    <h6 style="color: #28a745;">✅ Location Selected!</h6>
+                    <p><strong>Latitude:</strong> ${lat.toFixed(6)}</p>
+                    <p><strong>Longitude:</strong> ${lng.toFixed(6)}</p>
+                    <p style="font-size: 12px; color: #6c757d;">This location will be saved with your listing</p>
+                </div>
+            `).openPopup();
+            
+            console.log('✅ Marker set and coordinates updated');
+        }
+        
+        // Function to search location on map
+        function searchOnMap() {
+            const location = document.getElementById('location').value;
+            const country = document.getElementById('country').value;
+            
+            if (!location) {
+                alert('Please enter a location first');
+                return;
+            }
+            
+            const searchQuery = country ? `${location}, ${country}` : location;
+            console.log('Searching for:', searchQuery);
+            
+            // Show loading state
+            const searchBtn = event.target;
+            const originalText = searchBtn.innerHTML;
+            searchBtn.innerHTML = '🔄 Searching...';
+            searchBtn.disabled = true;
+            
+            // Use Nominatim API for geocoding
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1`)
+                .then(response => response.json())
+                .then(data => {
+                    searchBtn.innerHTML = originalText;
+                    searchBtn.disabled = false;
+                    
+                    if (data && data.length > 0) {
+                        const lat = parseFloat(data[0].lat);
+                        const lng = parseFloat(data[0].lon);
+                        
+                        console.log('Location found:', lat, lng);
+                        
+                        // Move map to location and zoom in
+                        newListingMap.setView([lat, lng], 15);
+                        
+                        // Set marker at found location
+                        setMarkerAtLocation(lat, lng);
+                        
+                        // Update popup with found location name
+                        if (selectedMarker) {
+                            selectedMarker.getPopup().setContent(`
+                                <div style="text-align: center;">
+                                    <h6 style="color: #28a745;">✅ Found Location!</h6>
+                                    <p style="font-weight: bold;">${data[0].display_name}</p>
+                                    <p><strong>Coordinates:</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
+                                    <p style="font-size: 12px; color: #6c757d;">Click elsewhere to adjust position</p>
+                                </div>
+                            `);
+                        }
+                        
+                    } else {
+                        alert('Location not found. Please try a different search term or click directly on the map.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    searchBtn.innerHTML = originalText;
+                    searchBtn.disabled = false;
+                    alert('Error searching for location. Please try again.');
+                });
+        }
+        
+        // Function to clear map selection
+        function clearMapSelection() {
+            console.log('Clearing map selection');
+            
+            // Remove marker
+            if (selectedMarker) {
+                newListingMap.removeLayer(selectedMarker);
+                selectedMarker = null;
+            }
+            
+            // Clear hidden fields
+            document.getElementById('longitude').value = '';
+            document.getElementById('latitude').value = '';
+            
+            // Hide coordinate display
+            document.getElementById('coordinates-display').style.display = 'none';
+            
+            // Reset map view
+            newListingMap.setView([20.5937, 78.9629], 5);
+            
+            console.log('✅ Map selection cleared');
+        }
+        
+        // Auto-search when location field changes (optional)
+        document.getElementById('location').addEventListener('blur', function() {
+            if (this.value && !document.getElementById('longitude').value) {
+                // Auto-search only if no coordinates are set yet
+                setTimeout(() => {
+                    if (confirm('Would you like to search for this location on the map?')) {
+                        searchOnMap();
+                    }
+                }, 500);
+            }
+        });
+    </script>
+</body>
