@@ -11,6 +11,7 @@ const path = require('path');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 
 
@@ -47,9 +48,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
+const store=MongoStore.create({
+    mongoUrl:dburl,
+    crypto:{ 
+        secret:process.env.SECRET,
+    },
+    touchAfter: 24*3600,
+});
+store.on("error",()=>{
+    console.log("Error in MONGO SESSION STORE",err);
+});
 // Session and Flash Configuration
 const sessionOptions = {
-    secret: "mysecretkey",
+    store,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -58,6 +70,8 @@ const sessionOptions = {
         httpOnly: true
     }
 };
+
+
 app.use(session(sessionOptions));
 app.use(flash());
 
