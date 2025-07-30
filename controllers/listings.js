@@ -1,22 +1,34 @@
 const Listing = require("../models/listing");
+const axios=require("axios");
 
 
 // Geocoding function - unchanged
+  
+// Geocoding function
 const geocodeLocation = async (location) => {
   try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}&limit=1`
-    );
-    const data = await response.json();
+    const response = await axios.get("https://nominatim.openstreetmap.org/search", {
+      params: {
+        q: location,
+        format: "json",
+        limit: 1
+      },
+      headers: {
+        "User-Agent": "WanderLustApp/1.0 (your_email@example.com)" // Required
+      }
+    });
 
+    const data = response.data;
     if (data && data.length > 0) {
       const lat = parseFloat(data[0].lat);
       const lon = parseFloat(data[0].lon);
-      return [lon, lat]; // GeoJSON: [lng, lat]
+      return [lon, lat]; // GeoJSON uses [lng, lat]
     }
-    return [77.2090, 28.6139]; // Default: Delhi
+
+    console.warn("⚠️ No geocoding result, defaulting to Delhi:", location);
+    return [77.2090, 28.6139]; // Default fallback
   } catch (error) {
-    console.error("Geocoding error:", error);
+    console.error("❌ Geocoding error:", error.message);
     return [77.2090, 28.6139];
   }
 };
