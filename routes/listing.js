@@ -43,7 +43,7 @@ router.post("/:id/update-location", isLoggedIn, isOwner, wrapAsync(async (req, r
 
 // Combined routes for root path
 router.route("/")
-  .get(isLoggedIn, wrapAsync(listingController.index))
+  .get( wrapAsync(listingController.index))
   .post(isLoggedIn, upload.single('listing[image]'), validateListing, wrapAsync(listingController.createListing));
 
 // Edit route - BEFORE the dynamic /:id route

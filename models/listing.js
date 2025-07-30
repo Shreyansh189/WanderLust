@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const review = require('./review');
+const Review = require('./review');
 const Schema = mongoose.Schema;
 
 const listingSchema = new Schema({
@@ -10,37 +10,51 @@ const listingSchema = new Schema({
         filename: String
     },
     price: { type: Number, required: true },
-    location: { type: String, },
-    country: { type: String, },
-    
-    // ADD THIS NEW FIELD FOR MAP INTEGRATION
+    location: { type: String, required: true },
+    country: { type: String, required: true },
+
+    // Geometry field for map integration (Leaflet/Google Maps)
     geometry: {
         type: {
             type: String,
             enum: ['Point'],
-            default: 'Point'
+            required: true
         },
         coordinates: {
-            type: [Number], // [longitude, latitude]
-            default: [0, 0]
+            type: [Number], // GeoJSON [longitude, latitude]
+            required: true
         }
     },
-    
+
+    tags: [{ type: String }], // Array of tags for filtering/searching
+
     reviews: [{
         type: Schema.Types.ObjectId,
-        ref: "Review" // Reference to the Review model
+        ref: "Review"
     }],
+
     owner: {
         type: Schema.Types.ObjectId,
         ref: "User",
-    },
+    }
+}, {
+    timestamps: true // Automatically add createdAt and updatedAt fields
 });
 
-listingSchema.pre('findOneAndDelete', async function (next) {
-    const listing = this;
-    await review.deleteMany({ _id: { $in: listing.reviews } });
-    next();
+// Create text index for efficient full-text search on multiple fields
+listingSchema.index({
+    title: 'text',
+    location: 'text',
+    country: 'text',
+    description: 'text'
 });
 
-const listing = mongoose.model('Listing', listingSchema);
-module.exports = listing; // Export the model so it can be used in other files
+// Middleware: Automatically delete associated reviews when a listing is deleted
+listingSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) {
+        await Review.deleteMany({ _id: { $in: doc.reviews } });
+    }
+});
+
+const Listing = mongoose.model('Listing', listingSchema);
+module.exports = Listing;

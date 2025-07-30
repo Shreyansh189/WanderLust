@@ -113,3 +113,82 @@ margin-top: 7rem;
     height: 400px !important;
     width: 100%;
 }
+      #filters {
+            display: flex;
+            flex-wrap: wrap;
+        }
+.filter{
+    text-align: center;
+    margin-right: 2rem;
+    margin-top: 2rem;
+    opacity: 0.7;
+}
+.filter:hover{
+    opacity: 1;
+    cursor: pointer;
+}
+.taxInfo{
+    display: none;
+}
+.card-style:hover{
+    opacity: 0.8;
+}
+.card-img-container{
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+#filters {
+  display: flex;
+  gap: 16px;
+  flex-wrap: nowrap;          /* Keep filters in one row on small screens */
+  overflow-x: auto;           /* Enable horizontal scroll on overflow */
+  padding: 10px 0;
+  margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+}
+
+#filters .filter {
+  flex: 0 0 auto;             /* Prevent shrinking; keep min size */
+  min-width: 80px;            /* Minimum width for touch comfort */
+  text-align: center;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1.5px solid #eee;
+  background-color: white;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#filters .filter a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#filters .filter i {
+  font-size: 1.5em;
+  margin-bottom: 6px;
+}
+
+/* Optional: Active filter style */
+#filters .filter.active-filter {
+  border-color: #007bff;
+  background-color: #e6f0ff;
+}
+
+
+/* Make filters wrap on larger screens */
+@media (min-width: 768px) {
+  #filters {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    overflow-x: visible;
+  }
+
+  #filters .filter {
+    margin-bottom: 10px;
+  }
+}

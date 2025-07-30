@@ -24,13 +24,16 @@ const reviewRouter = require('./routes/review.js');
 const userRouter=require("./routes/user.js");
 
 const app = express();
-const Mongo_url = "mongodb://127.0.0.1:27017/Website";
+/*const Mongo_url = "mongodb://127.0.0.1:27017/Website";
+*/
+const dburl=process.env.ATLASDB_URL;
+
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
 const User=require("./models/user.js");
 // MongoDB Connection
 async function main() {
-    await mongoose.connect(Mongo_url);
+    await mongoose.connect(dburl);
 }
 main()
     .then(() => console.log("Connected to MongoDB"))
@@ -84,9 +87,11 @@ app.get("/demouser", async (req, res) => {
 });
 
 // Routes
-app.get('/', (req, res) => {
+/*app.get('/', (req, res) => {
     res.send("Airbnb");
 });
+
+*/
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/",userRouter);

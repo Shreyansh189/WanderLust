@@ -1,15 +1,44 @@
 <% layout("layouts/boilerplate")%>
 <body>
-    
-    <h3>ALL listings</h3>
+
+
+   
+    <!--filter div -->
+<div id="filters">
+  <% const tagsList = [
+    { tag: "Trending", icon: "fa-fire" },
+    { tag: "Rooms", icon: "fa-house" },
+    { tag: "Iconic cities", icon: "fa-mountain-city" },
+    { tag: "Mountains", icon: "fa-mountain" },
+    { tag: "Castles", icon: "fa-fort-awesome" },
+    { tag: "Beach side", icon: "fa-umbrella-beach" },
+    { tag: "swimming pool", icon: "fa-person-swimming" },
+    { tag: "Camping", icon: "fa-campground" },
+    { tag: "Farms", icon: "fa-cow" }
+  ]; %>
+
+  <% tagsList.forEach(({ tag, icon }) => { %>
+    <div class="filter">
+      <a href="/listings?tag=<%= encodeURIComponent(tag) %>" style="text-decoration: none; color: inherit;">
+        <div><i class="fa-solid <%= icon %>"></i></div>
+        <p><%= tag %></p>
+      </a>
+    </div>
+  <% }); %>
+</div>
+
+
+    </diV>
 
     <!-- Cluster Map Section -->
-    <div class="row mb-4">
+    <div class="row mb-4 mt-3">
         <div class="col-12">
             <h4>Explore Locations</h4>
-            <div id="cluster-map" style="height: 400px; width: 100%; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"></div>
+            <div id="cluster-map" style="height: 400px;margin-left: 2rem; width: 95%; border-radius: 10px; box-shadow: 15px 15px 15px rgba(0,0,0,0.1);"></div>
         </div>
     </div>
+
+
 
     <!-- Listings Grid -->
     <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4">
@@ -17,14 +46,18 @@
         <div class="col">
           <a href="/listings/<%=listing._id%>" style="text-decoration: none; color: inherit;">
             <div class="card h-100 listing-card">
+                <div class="card-style">
             <div class="card-img-container" style="position: relative;">
               <img src="<%=listing.image.url%>" class="card-img-top" alt="listing_image" style="height:20rem">
               <div class="card-img-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3);"></div>
             </div>
+            </div>
+
             <div class="card-body">
-              <p class="card-text">
+              <p class="card-text mt-2">
                 <strong><%= listing.title %></strong><br>
                 ₹<%= listing.price.toLocaleString("en-IN") %> /night
+                <i class="taxInfo"> &nbsp; &nbsp;  +18% GST</i>
               </p>
             </div>
             </div>
@@ -159,5 +192,6 @@
             }
         });
     </script>
+   
  
 </body>
