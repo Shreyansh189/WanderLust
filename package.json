@@ -4,14 +4,24 @@
   },
   "name": "wanderlust",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "travel",
+    "mern",
+    "nodejs",
+    "mongodb",
+    "express",
+    "ejs",
+    "wanderlust"
+  ],
+  "author": "Shreyansh Ghanekar",
+  "license": "MIT",
+  "description": "A full-stack travel accommodation platform built with Node.js, Express, MongoDB, and EJS. Features include CRUD listings, map integration, user authentication, and image uploads.",
   "dependencies": {
     "axios": "^1.11.0",
     "bootstrap": "^5.3.7",
@@ -33,5 +43,8 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
