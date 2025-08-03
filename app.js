@@ -25,8 +25,8 @@ const reviewRouter = require('./routes/review.js');
 const userRouter=require("./routes/user.js");
 
 const app = express();
-/*const Mongo_url = "mongodb://127.0.0.1:27017/Website";
-*/
+
+
 const dburl=process.env.ATLASDB_URL;
 
 const passport=require("passport");
@@ -101,11 +101,15 @@ app.get("/demouser", async (req, res) => {
 });
 
 // Routes
-/*app.get('/', (req, res) => {
-    res.send("Airbnb");
+app.get("/", (req, res) => {
+    if (req.isAuthenticated()) {
+        return res.redirect("/listings"); 
+    }
+    res.redirect("/login"); 
 });
 
-*/
+
+
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/",userRouter);
