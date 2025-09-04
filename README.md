@@ -44,9 +44,9 @@ npm run test
 
 👤 **Shreyansh Ghanekar**
 
-* Website: https://shreyansh-port.lovable.app
+* Website: https://wanderlust-m4ns.onrender.com/listings
 * Github: [@Shreyansh189](https://github.com/Shreyansh189)
-* LinkedIn: [@Shreyansh Ghanekar](https://linkedin.com/in/Shreyansh Ghanekar)
+* LinkedIn: [@Shreyansh Ghanekar](https://www.linkedin.com/in/shreyansh-ghanekar-166071256)
 
 ## Show your support
 
