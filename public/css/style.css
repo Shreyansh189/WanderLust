@@ -69,6 +69,9 @@ margin-top: 7rem;
   width: 100% !important;
   object-fit: cover !important;
 }
+.listing-img{
+  height: 20rem;
+}
 .card-body{
     padding: 0 !important;
 }
@@ -177,6 +180,23 @@ margin-top: 7rem;
 #filters .filter.active-filter {
   border-color: #007bff;
   background-color: #e6f0ff;
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .listing-img{
+    height: 12rem;
+  }
+  #cluster-map{
+    height: 260px !important;
+    width: 100% !important;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 991.98px) {
+  .listing-img{
+    height: 16rem;
+  }
 }
 
 

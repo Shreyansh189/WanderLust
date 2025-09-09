@@ -27,7 +27,8 @@ const userRouter=require("./routes/user.js");
 const app = express();
 
 
-const dburl=process.env.ATLASDB_URL;
+const dburl = process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/WanderLust";
+const sessionSecret = process.env.SECRET || "thisshouldbeabettersecret";
 
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
@@ -48,20 +49,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
-const store=MongoStore.create({
-    mongoUrl:dburl,
-    crypto:{ 
-        secret:process.env.SECRET,
+const store = MongoStore.create({
+    mongoUrl: dburl,
+    crypto: {
+        secret: sessionSecret,
     },
-    touchAfter: 24*3600,
+    touchAfter: 24 * 3600,
 });
-store.on("error",()=>{
-    console.log("Error in MONGO SESSION STORE",err);
+store.on("error", (err) => {
+    console.log("Error in MONGO SESSION STORE", err);
 });
 // Session and Flash Configuration
 const sessionOptions = {
     store,
-    secret: process.env.SECRET,
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: true,
     cookie: {
